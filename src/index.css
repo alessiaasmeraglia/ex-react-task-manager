@@ -249,3 +249,47 @@ body {
 .confirm-button:hover {
   background-color: #b91c1c;
 }
+
+.task-detail-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.edit-button {
+  padding: 0.8rem 1.2rem;
+  border: 0;
+  border-radius: 6px;
+  background-color: #2563eb;
+  color: white;
+  cursor: pointer;
+  font: inherit;
+  font-weight: bold;
+}
+
+.edit-button:hover {
+  background-color: #1d4ed8;
+}
+
+.edit-task-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.hidden-submit {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  .task-detail-actions {
+    flex-direction: column;
+  }
+
+  .task-detail-actions button {
+    width: 100%;
+  }
+}

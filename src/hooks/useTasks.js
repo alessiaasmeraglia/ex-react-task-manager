@@ -92,8 +92,42 @@ function useTasks() {
         );
     }
 
-    function updateTask() {
-        // Verrà completata nella Milestone 10
+    async function updateTask(updatedTask) {
+        const response = await fetch(
+            `${API_URL}/tasks/${updatedTask.id}`,
+            {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updatedTask),
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(
+                'Errore durante la modifica del task'
+            );
+        }
+
+        const data = await response.json();
+
+        if (!data.success) {
+            throw new Error(
+                data.message ||
+                'Errore durante la modifica del task'
+            );
+        }
+
+        setTasks((currentTasks) =>
+            currentTasks.map((task) =>
+                String(task.id) === String(updatedTask.id)
+                    ? data.task
+                    : task
+            )
+        );
+
+        return data.task;
     }
 
     return {
