@@ -189,3 +189,63 @@ body {
 .delete-button:hover {
   background-color: #b91c1c;
 }
+
+.modal-overlay {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: grid;
+  padding: 1rem;
+  place-items: center;
+  background-color: rgb(15 23 42 / 65%);
+}
+
+.modal {
+  width: min(500px, 100%);
+  padding: 1.5rem;
+  border-radius: 10px;
+  background-color: white;
+  box-shadow: 0 8px 30px rgb(0 0 0 / 25%);
+}
+
+.modal h2 {
+  margin-top: 0;
+}
+
+.modal-content {
+  margin: 1rem 0;
+  line-height: 1.5;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.modal-actions button {
+  padding: 0.7rem 1rem;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  font: inherit;
+  font-weight: bold;
+}
+
+.cancel-button {
+  background-color: #e5e7eb;
+  color: #1f2937;
+}
+
+.cancel-button:hover {
+  background-color: #d1d5db;
+}
+
+.confirm-button {
+  background-color: #dc2626;
+  color: white;
+}
+
+.confirm-button:hover {
+  background-color: #b91c1c;
+}

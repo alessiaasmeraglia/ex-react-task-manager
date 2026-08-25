@@ -1,5 +1,8 @@
+import { useState } from 'react';
 import { useGlobalContext } from '../context/GlobalContext';
+import Modal from '../components/Modal';
 import { useNavigate, useParams } from 'react-router-dom';
+
 
 function TaskDetail() {
     const { taskId } = useParams();
@@ -7,81 +10,99 @@ function TaskDetail() {
 
     const { tasks, removeTask } = useGlobalContext();
 
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+
     const task = tasks.find(
         (currentTask) => String(currentTask.id) === taskId
     );
 
-    async function handleDelete() {
-        const isConfirmed = window.confirm(
-            'Sei sicuro di voler eliminare questo task?'
+    function openDeleteModal() {
+        setShowDeleteModal(true);
+    }
+
+    function closeDeleteModal() {
+        setShowDeleteModal(false);
+    }
+
+    async function handleConfirmDelete() {
+        try {
+            await removeTask(taskId);
+
+            setShowDeleteModal(false);
+
+            alert('Task eliminato con successo.');
+
+            navigate('/');
+        } catch (error) {
+            setShowDeleteModal(false);
+            alert(error.message);
+        }
+    }
+
+    if (!task) {
+        return (
+            <section className="page">
+                <h1>Task non trovato</h1>
+
+                <p>
+                    Non è stato possibile trovare il task richiesto.
+                </p>
+            </section>
         );
-    
-
-    if (!isConfirmed) {
-        return;
     }
 
-    try {
-        await removeTask(taskId);
-
-        alert('Task eliminato con successo.');
-
-        navigate('/');
-    } catch (error) {
-        alert(error.message);
-    }
-}
-
-if (!task) {
     return (
         <section className="page">
-            <h1>Task non trovato</h1>
+            <article className="task-detail">
+                <h1>{task.title}</h1>
 
-            <p>
-                Non è stato possibile trovare il task richiesto.
-            </p>
+                <div className="task-detail-content">
+                    <p>
+                        <strong>Descrizione:</strong>
+                    </p>
+
+                    <p>{task.description}</p>
+
+                    <p>
+                        <strong>Stato:</strong>{' '}
+                        <span
+                            className={`status status-${getStatusClass(
+                                task.status
+                            )}`}
+                        >
+                            {task.status}
+                        </span>
+                    </p>
+
+                    <p>
+                        <strong>Data di creazione:</strong>{' '}
+                        {formatDate(task.createdAt)}
+                    </p>
+                </div>
+
+                <button
+                    className="delete-button"
+                    onClick={openDeleteModal}
+                >
+                    Elimina Task
+                </button>
+            </article>
+            <Modal
+                title="Conferma eliminazione"
+                content={
+                    <p>
+                        Sei sicuro di voler eliminare il task{' '}
+                        <strong>{task.title}</strong>?
+                    </p>
+                }
+                show={showDeleteModal}
+                onClose={closeDeleteModal}
+                onConfirm={handleConfirmDelete}
+                confirmText="Elimina"
+            />
         </section>
+
     );
-}
-
-return (
-    <section className="page">
-        <article className="task-detail">
-            <h1>{task.title}</h1>
-
-            <div className="task-detail-content">
-                <p>
-                    <strong>Descrizione:</strong>
-                </p>
-
-                <p>{task.description}</p>
-
-                <p>
-                    <strong>Stato:</strong>{' '}
-                    <span
-                        className={`status status-${getStatusClass(
-                            task.status
-                        )}`}
-                    >
-                        {task.status}
-                    </span>
-                </p>
-
-                <p>
-                    <strong>Data di creazione:</strong>{' '}
-                    {formatDate(task.createdAt)}
-                </p>
-            </div>
-
-            <button
-                className="delete-button"
-                onClick={handleDelete}
-            >
-                Elimina Task
-            </button>
-        </article>
-    </section>
-);
 }
 
 function getStatusClass(status) {
