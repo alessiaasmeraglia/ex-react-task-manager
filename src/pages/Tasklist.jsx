@@ -2,7 +2,29 @@ import { useGlobalContext } from '../context/GlobalContext';
 import TaskRow from '../components/TaskRow';
 
 function TaskList() {
-    const { tasks } = useGlobalContext();
+    const {
+        tasks,
+        isLoading,
+        error,
+    } = useGlobalContext();
+
+    if (isLoading) {
+        return (
+            <section className="page">
+                <h1>Lista dei task</h1>
+                <p>Caricamento dei task...</p>
+            </section>
+        );
+    }
+
+    if (error) {
+        return (
+            <section className="page">
+                <h1>Lista dei task</h1>
+                <p className="error-message">{error}</p>
+            </section>
+        );
+    }
 
     return (
         <section className="page">
