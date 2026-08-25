@@ -1,9 +1,17 @@
 import { memo } from 'react';
+import { Link } from 'react-router-dom';
 
 function TaskRow({ task }) {
     return (
         <tr>
-            <td>{task.title}</td>
+            <td>
+                <Link
+                    className="task-link"
+                    to={`/task/${task.id}`}
+                >
+                    {task.title}
+                </Link>
+            </td>
 
             <td>
                 <span className={`status status-${getStatusClass(task.status)}`}>
