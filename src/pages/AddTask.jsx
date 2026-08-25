@@ -1,13 +1,16 @@
 import { useRef, useState } from 'react';
+import { useGlobalContext } from '../context/GlobalContext';
 
 const symbols = `!@#$%^&*()-_=+[]{}|;:'\\",.<>?/` + '~';
 
 function AddTask() {
+    const { addTask } = useGlobalContext();
     const [title, setTitle] = useState('');
     const [titleError, setTitleError] = useState('');
 
     const descriptionRef = useRef(null);
     const statusRef = useRef(null);
+    const formRef = useRef(null);
 
     function validateTitle(value) {
         const trimmedTitle = value.trim();
@@ -36,11 +39,8 @@ function AddTask() {
         setTitleError(validateTitle(value));
     }
 
-    function handleSubmit(event) {
+    async function handleSubmit(event) {
         event.preventDefault();
-
-        const description = descriptionRef.current.value;
-        const status = statusRef.current.value;
 
         const error = validateTitle(title);
 
@@ -52,11 +52,22 @@ function AddTask() {
 
         const newTask = {
             title: title.trim(),
-            description,
-            status,
+            description: descriptionRef.current.value,
+            status: statusRef.current.value,
         };
 
-        console.log('Nuovo task:', newTask);
+        try {
+            await addTask(newTask);
+
+            alert('Task aggiunto con successo.');
+
+            setTitle('');
+            setTitleError('');
+            descriptionRef.current.value = '';
+            statusRef.current.value = 'To do';
+        } catch (error) {
+            alert(error.message);
+        }
     }
 
     return (
@@ -64,6 +75,7 @@ function AddTask() {
             <h1>Aggiungi un task</h1>
 
             <form
+                ref={formRef}
                 className="task-form"
                 onSubmit={handleSubmit}
             >

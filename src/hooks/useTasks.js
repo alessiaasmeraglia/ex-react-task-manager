@@ -31,8 +31,35 @@ function useTasks() {
             });
     }, []);
 
-    function addTask() {
-        // Verrà completata nella Milestone 6
+    async function addTask(newTask) {
+        const response = await fetch(`${API_URL}/tasks`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newTask),
+        });
+
+        if (!response.ok) {
+            throw new Error(
+                'Errore durante la creazione del task'
+            );
+        }
+
+        const data = await response.json();
+
+        if (!data.success) {
+            throw new Error(
+                data.message || 'Errore durante la creazione del task'
+            );
+        }
+
+        setTasks((currentTasks) => [
+            ...currentTasks,
+            data.task,
+        ]);
+
+        return data.task;
     }
 
     function removeTask() {
