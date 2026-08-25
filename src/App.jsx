@@ -3,22 +3,27 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import AddTask from './pages/AddTask';
 import TaskList from './pages/Tasklist';
+
+import { GlobalProvider } from './context/GlobalContext';
+
 function App() {
   return (
     <BrowserRouter>
-      <Navbar />
+      <GlobalProvider>
+        <Navbar />
 
-      <Routes>
-        <Route
-          path="/"
-          element={<TaskList />}
-        />
+        <Routes>
+          <Route
+            path="/"
+            element={<TaskList />}
+          />
 
-        <Route
-          path="/add-task"
-          element={<AddTask />}
-        />
-      </Routes>
+          <Route
+            path="/add-task"
+            element={<AddTask />}
+          />
+        </Routes>
+      </GlobalProvider>
     </BrowserRouter>
   );
 }
