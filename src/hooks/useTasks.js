@@ -62,8 +62,34 @@ function useTasks() {
         return data.task;
     }
 
-    function removeTask() {
-        // Verrà completata nella Milestone 8
+    async function removeTask(taskId) {
+        const response = await fetch(
+            `${API_URL}/tasks/${taskId}`,
+            {
+                method: 'DELETE',
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(
+                'Errore durante l’eliminazione del task'
+            );
+        }
+
+        const data = await response.json();
+
+        if (!data.success) {
+            throw new Error(
+                data.message ||
+                'Errore durante l’eliminazione del task'
+            );
+        }
+
+        setTasks((currentTasks) =>
+            currentTasks.filter(
+                (task) => String(task.id) !== String(taskId)
+            )
+        );
     }
 
     function updateTask() {
