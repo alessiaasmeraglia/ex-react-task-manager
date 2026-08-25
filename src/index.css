@@ -84,3 +84,66 @@ body {
   background-color: #bbf7d0;
   color: #166534;
 }
+
+.task-form {
+  display: grid;
+  gap: 1.25rem;
+  max-width: 650px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  border-radius: 10px;
+  background-color: white;
+  box-shadow: 0 3px 12px rgb(0 0 0 / 12%);
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-field label {
+  font-weight: bold;
+}
+
+.form-field input,
+.form-field textarea,
+.form-field select {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font: inherit;
+}
+
+.form-field textarea {
+  resize: vertical;
+}
+
+.form-field input:focus,
+.form-field textarea:focus,
+.form-field select:focus {
+  outline: 2px solid #2563eb;
+  border-color: transparent;
+}
+
+.error-message {
+  margin: 0;
+  color: #dc2626;
+  font-size: 0.9rem;
+}
+
+.task-form button {
+  padding: 0.85rem 1rem;
+  border: 0;
+  border-radius: 6px;
+  background-color: #2563eb;
+  color: white;
+  cursor: pointer;
+  font: inherit;
+  font-weight: bold;
+}
+
+.task-form button:hover {
+  background-color: #1d4ed8;
+}
