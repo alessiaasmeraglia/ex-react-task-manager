@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useCallback, useEffect, useRef } from 'react';
 
 import { useGlobalContext } from '../context/GlobalContext';
 import TaskRow from '../components/TaskRow';
@@ -18,9 +18,46 @@ function TaskList() {
 
     const [sortBy, setSortBy] = useState('createdAt');
     const [sortOrder, setSortOrder] = useState(1);
+    const [searchQuery, setSearchQuery] = useState('');
 
-    const sortedTasks = useMemo(() => {
-        const tasksCopy = [...tasks];
+    const searchInputRef = useRef(null);
+    const debounceTimeoutRef = useRef(null);
+
+    const updateSearchQuery = useCallback((value) => {
+        if (debounceTimeoutRef.current) {
+            clearTimeout(debounceTimeoutRef.current);
+        }
+
+        debounceTimeoutRef.current = setTimeout(() => {
+            setSearchQuery(value);
+        }, 300);
+    }, []);
+
+    useEffect(() => {
+        return () => {
+            if (debounceTimeoutRef.current) {
+                clearTimeout(debounceTimeoutRef.current);
+            }
+        };
+    }, []);
+
+
+    const filteredAndSortedTasks = useMemo(() => {
+        const normalizedQuery = searchQuery
+            .trim()
+            .toLowerCase();
+
+        const filteredTasks = tasks.filter((task) => {
+            if (normalizedQuery === '') {
+                return true;
+            }
+
+            return task.title
+                .toLowerCase()
+                .includes(normalizedQuery);
+        });
+
+        const tasksCopy = [...filteredTasks];
 
         tasksCopy.sort((taskA, taskB) => {
             let comparison = 0;
@@ -42,8 +79,13 @@ function TaskList() {
             }
 
             if (sortBy === 'createdAt') {
-                const dateA = new Date(taskA.createdAt).getTime();
-                const dateB = new Date(taskB.createdAt).getTime();
+                const dateA = new Date(
+                    taskA.createdAt
+                ).getTime();
+
+                const dateB = new Date(
+                    taskB.createdAt
+                ).getTime();
 
                 comparison = dateA - dateB;
             }
@@ -52,7 +94,13 @@ function TaskList() {
         });
 
         return tasksCopy;
-    }, [tasks, sortBy, sortOrder]);
+    }, [tasks, searchQuery, sortBy, sortOrder]);
+
+    function handleSearchChange() {
+        const value = searchInputRef.current.value;
+
+        updateSearchQuery(value);
+    }
 
     function handleSort(column) {
         if (sortBy === column) {
@@ -94,8 +142,22 @@ function TaskList() {
         <section className="page">
             <h1>Lista dei task</h1>
 
-            {tasks.length === 0 ? (
-                <p>Non ci sono task disponibili.</p>
+            <div className="task-list-toolbar">
+                <label htmlFor="task-search">
+                    Cerca un task
+                </label>
+
+                <input
+                    id="task-search"
+                    type="text"
+                    ref={searchInputRef}
+                    onChange={handleSearchChange}
+                    placeholder="Cerca per nome..."
+                />
+            </div>
+
+            {filteredAndSortedTasks.length === 0 ? (
+                <p>Nessun task trovato.</p>
             ) : (
                 <div className="table-wrapper">
                     <table className="tasks-table">
@@ -139,7 +201,7 @@ function TaskList() {
                         </thead>
 
                         <tbody>
-                            {sortedTasks.map((task) => (
+                            {filteredAndSortedTasks.map((task) => (
                                 <TaskRow
                                     key={task.id}
                                     task={task}

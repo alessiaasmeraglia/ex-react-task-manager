@@ -300,6 +300,30 @@ body {
   color: #93c5fd;
 }
 
+.task-list-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: 500px;
+  margin-bottom: 1.5rem;
+}
+
+.task-list-toolbar label {
+  font-weight: bold;
+}
+
+.task-list-toolbar input {
+  padding: 0.8rem 1rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font: inherit;
+}
+
+.task-list-toolbar input:focus {
+  outline: 2px solid #2563eb;
+  border-color: transparent;
+}
+
 @media (max-width: 600px) {
   .task-detail-actions {
     flex-direction: column;
