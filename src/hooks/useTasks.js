@@ -130,6 +130,69 @@ function useTasks() {
         return data.task;
     }
 
+    async function removeMultipleTasks(taskIds) {
+        const results = await Promise.allSettled(
+            taskIds.map(async (taskId) => {
+                const response = await fetch(
+                    `${API_URL}/tasks/${taskId}`,
+                    {
+                        method: 'DELETE',
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error(
+                        `Errore per il task ${taskId}`
+                    );
+                }
+
+                const data = await response.json();
+
+                if (!data.success) {
+                    throw new Error(
+                        data.message ||
+                        `Errore per il task ${taskId}`
+                    );
+                }
+
+                return taskId;
+            })
+        );
+
+        const successfulIds = [];
+        const failedIds = [];
+
+        results.forEach((result, index) => {
+            const taskId = taskIds[index];
+
+            if (result.status === 'fulfilled') {
+                successfulIds.push(taskId);
+            } else {
+                failedIds.push(taskId);
+            }
+        });
+
+        if (successfulIds.length > 0) {
+            setTasks((currentTasks) =>
+                currentTasks.filter(
+                    (task) =>
+                        !successfulIds.some(
+                            (taskId) =>
+                                String(task.id) === String(taskId)
+                        )
+                )
+            );
+        }
+
+        if (failedIds.length > 0) {
+            throw new Error(
+                `Non è stato possibile eliminare i task: ${failedIds.join(
+                    ', '
+                )}`
+            );
+        }
+    }
+
     return {
         tasks,
         setTasks,
@@ -138,6 +201,7 @@ function useTasks() {
         addTask,
         removeTask,
         updateTask,
+        removeMultipleTasks
     };
 }
 

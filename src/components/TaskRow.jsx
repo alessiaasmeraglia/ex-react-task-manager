@@ -1,16 +1,25 @@
 import { memo } from 'react';
 import { Link } from 'react-router-dom';
 
-function TaskRow({ task }) {
+function TaskRow({ task, checked, onToggle }) {
     return (
         <tr>
             <td>
-                <Link
-                    className="task-link"
-                    to={`/task/${task.id}`}
-                >
-                    {task.title}
-                </Link>
+                <label className="task-selection">
+                    <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={() => onToggle(task.id)}
+                        aria-label={`Seleziona ${task.title}`}
+                    />
+
+                    <Link
+                        className="task-link"
+                        to={`/task/${task.id}`}
+                    >
+                        {task.title}
+                    </Link>
+                </label>
             </td>
 
             <td>

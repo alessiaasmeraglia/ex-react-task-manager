@@ -14,11 +14,13 @@ function TaskList() {
         tasks,
         isLoading,
         error,
+        removeMultipleTasks,
     } = useGlobalContext();
 
     const [sortBy, setSortBy] = useState('createdAt');
     const [sortOrder, setSortOrder] = useState(1);
     const [searchQuery, setSearchQuery] = useState('');
+    const [selectedTaskIds, setSelectedTaskIds] = useState([]);
 
     const searchInputRef = useRef(null);
     const debounceTimeoutRef = useRef(null);
@@ -138,6 +140,38 @@ function TaskList() {
         );
     }
 
+    function toggleSelection(taskId) {
+        setSelectedTaskIds((currentIds) => {
+            const isSelected = currentIds.some(
+                (id) => String(id) === String(taskId)
+            );
+
+            if (isSelected) {
+                return currentIds.filter(
+                    (id) => String(id) !== String(taskId)
+                );
+            }
+
+            return [...currentIds, taskId];
+        });
+    }
+
+    async function handleRemoveSelected() {
+        try {
+            await removeMultipleTasks(selectedTaskIds);
+
+            alert(
+                'Task selezionati eliminati con successo.'
+            );
+
+            setSelectedTaskIds([]);
+        } catch (error) {
+            alert(error.message);
+
+            setSelectedTaskIds([]);
+        }
+    }
+
     return (
         <section className="page">
             <h1>Lista dei task</h1>
@@ -155,6 +189,17 @@ function TaskList() {
                     placeholder="Cerca per nome..."
                 />
             </div>
+
+            {selectedTaskIds.length > 0 && (
+                <button
+                    type="button"
+                    className="delete-selected-button"
+                    onClick={handleRemoveSelected}
+                >
+                    Elimina Selezionate (
+                    {selectedTaskIds.length})
+                </button>
+            )}
 
             {filteredAndSortedTasks.length === 0 ? (
                 <p>Nessun task trovato.</p>

@@ -14,6 +14,7 @@ export function GlobalProvider({ children }) {
         addTask,
         removeTask,
         updateTask,
+        removeMultipleTasks
     } = useTasks();
 
     return (
@@ -25,7 +26,8 @@ export function GlobalProvider({ children }) {
                 error,
                 addTask,
                 removeTask,
-                updateTask
+                updateTask,
+                removeMultipleTasks
             }}
         >
             {children}
